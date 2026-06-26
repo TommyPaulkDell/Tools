@@ -13,7 +13,7 @@ Function Invoke-LogCollector{
         param($param)
 
 # Version
-$Ver="1.9"
+$Ver="1.91"
 
 #region Telemetry Information
 Write-Host "Logging Telemetry Information..."
@@ -538,9 +538,9 @@ Function UploadLogs {
         else {Write-Warning "Showtech upload FAILED!!. Please upload $($ZipPath.Fullname) using https://tdm.dell.com/file-upload"}
     }
     #Upload TSS
-    IF((Get-ChildItem -Path "C:\Dell\Logs" -Filter "$($CaseNumber).zip" -Recurse).count){
-        $ZipPath=Get-ChildItem -Path "C:\Dell\Logs" -Filter "$($CaseNumber).zip" -Recurse | sort lastwritetime | select -last 1
-        $ZipPath=Rename-Item $ZipPath.FullName "TSS-$($ZipPath.Name)" -PassThru
+    IF((Get-ChildItem -Path "C:\Dell\Logs" -Filter "TSS-$($CaseNumber)*.zip" -Recurse).count){
+        $ZipPath=Get-ChildItem -Path "C:\Dell\Logs" -Filter "TSS-$($CaseNumber)*.zip" -Recurse | sort lastwritetime | select -last 1
+        #$ZipPath=Rename-Item $ZipPath.FullName "TSS-$($ZipPath.Name)" -PassThru
         #Upload File...
         $s=Upload-FileToCase -FilePath $ZipPath.Fullname -CaseNumber $CaseNumber -Email $email.Address -PreferredName $email.User -ServiceTag "$(Get-WmiObject Win32_BIOS | Select-Object -ExpandProperty SerialNumber)"
         if ($s -eq 0) {Write-Host "TSS uploaded on case $CaseNumber" -ForegroundColor Green}
